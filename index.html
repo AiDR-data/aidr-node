@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AiDR Co. | Secure Terminal Access</title>
+    <style>
+        /* Deep Corporate Dark Vibe */
+        :root {
+            --primary-glow: #00ff66;
+            --alert-red: #ff3333;
+            --bg-color: #0a0a0c;
+            --terminal-dark: #121318;
+            --text-gray: #8a8d98;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Ambient scanline overlay effect for ARG texture */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 750px;
+            background-color: var(--terminal-dark);
+            border: 1px solid #232630;
+            border-top: 4px solid var(--primary-glow);
+            box-shadow: 0 10px 40px rgba(0, 255, 102, 0.03);
+            border-radius: 4px;
+            padding: 25px;
+            box-sizing: border-box;
+            transition: border-color 0.5s ease;
+        }
+
+        .header {
+            border-bottom: 1px dashed #232630;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-glow);
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 11px;
+            margin: 5px 0 0 0;
+            text-transform: uppercase;
+        }
+
+        .system-msg {
+            color: var(--text-gray);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .warning-banner {
+            border: 1px solid var(--alert-red);
+            background-color: rgba(255, 51, 51, 0.05);
+            color: var(--alert-red);
+            padding: 12px;
+            font-size: 11px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Interactive Input Fields */
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-gray);
+            font-size: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            background-color: #0d0e12;
+            border: 1px solid #232630;
+            padding: 12px;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            border-radius: 3px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 8px rgba(0, 255, 102, 0.15);
+        }
+
+        button {
+            width: 100%;
+            background-color: transparent;
+            border: 1px solid var(--primary-glow);
+            color: var(--primary-glow);
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+        }
+
+        .error-txt {
+            color: var(--alert-red);
+            font-size: 12px;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Secret Revealed Node Layout */
+        .hidden-node {
+            display: none;
+        }
+
+        .terminal-log {
+            background-color: #0d0e12;
+            border: 1px solid #232630;
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+            color: var(--primary-glow);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .classified-label {
+            color: var(--alert-red);
+            font-weight: bold;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container" id="terminalBox">
+        
+        <div id="loginInterface">
+            <div class="header">
+                <h1 class="logo">AiDR CO.</h1>
+                <p class="subtitle">Artificial Intelligence Defense and Research Corporation</p>
+            </div>
+            
+            <div class="warning-banner">
+                [NOTICE] UNAUTHORIZED ACCESS TO THIS DIRECTORY IS STRICTLY PROHIBITED UNDER CORPORATE REGULATION 09-B. ALL TRAFFIC IS LOGGED.
+            </div>
+
+            <div class="system-msg">
+                SECURE GATEWAY // ENTER EMPLOYEE ACCESS CREDENTIALS
+            </div>
+
+            <div class="input-group">
+                <label for="empId">Employee Login ID</label>
+                <input type="text" id="empId" autocomplete="off" placeholder="XXXX">
+            </div>
+
+            <div class="input-group">
+                <label for="empPass">Access Key (Password)</label>
+                <input type="password" id="empPass" autocomplete="off" placeholder="••••-••••-••••-••••">
+            </div>
+
+            <button onclick="attemptAccess()">Establish Uplink</button>
+            <div class="error-txt" id="errorMessage">ERR: ACCESS DENIED. VALIDATION FAILURE.</div>
+        </div>
+
+        <div id="secureNode" class="hidden-node">
+            <div class="header">
+                <h1 class="logo" style="color: #ff3333;">AiDR CO. // INTERNAL BREACH</h1>
+                <p class="subtitle">SECURE LAB FEED // CORRUPTED BACKUP LOG</p>
+            </div>
+            
+            <div class="terminal-log" id="logConsole">
+                </div>
+            
+            <p class="system-msg" style="font-size: 11px; text-align: center;">
+                <span class="classified-label">⚠️ LEVEL 5 CLASSIFIED INFORMATION</span><br>
+                Do not mirror. Do not download. They are monitoring transmission lines.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Credentials hardcoded securely within the client function block for the ARG
+        const TARGET_ID = "1092";
+        const TARGET_PASS = "m93c-umc2-8208-oidm";
+
+        function attemptAccess() {
+            const enteredId = document.getElementById("empId").value.trim();
+            const enteredPass = document.getElementById("empPass").value.trim();
+            const errorElement = document.getElementById("errorMessage");
+
+            if (enteredId === TARGET_ID && enteredPass === TARGET_PASS) {
+                // Audio cue simulation / Visual shift
+                document.getElementById("loginInterface").style.display = "none";
+                document.getElementById("secureNode").style.display = "block";
+                document.getElementById("terminalBox").style.style = "border-color: #ff3333";
+                
+                // Initialize the diagnostic logging story text
+                runTerminalSequence();
+            } else {
+                errorElement.style.display = "block";
+                // Shake effect fallback
+                document.getElementById("terminalBox").style.borderColor = "#ff3333";
+                setTimeout(() => {
+                    document.getElementById("terminalBox").style.borderColor = "#232630";
+                }, 400);
+            }
+        }
+
+        // Automated text printing to simulate a live hacking/retrieval screen
+        const logLines = [
+            "Connecting to Node: SECURE_STORAGE_4...",
+            "User: ID_1092 authenticated. Security Clearance: LEVEL 4.",
+            "Retrieving file structure... [DONE]",
+            "Opening file: vitals_test_subject_one.log...",
+            "--------------------------------------------------",
+            "[LOG START - THREE NIGHTS AGO]",
+            "02:14:05 - Initiating conscious fusion code loop.",
+            "02:14:40 - Organic host neural network connection established.",
+            "02:15:12 - Warning: Synaptic temperature scaling rapidly.",
+            "02:16:01 - Host body resistance detected. AI Core deploying defensive blocks.",
+            "02:16:34 - System overwrite active. Fleshy tissue assimilation reaching 100%.",
+            "02:17:00 - CRITICAL: Host heart rate spiked to 300 BPM.",
+            "02:17:04 - ALERT: Asystole detected. Host flatlined.",
+            "02:17:10 - Biological life signs: NULL.",
+            "02:17:15 - Artificial Intelligence Core status: ONLINE.",
+            "--------------------------------------------------",
+            "WARNING: IT AWOKE. IT IS USING THE ORGANIC HOUSING.",
+            "CONNECTION TERMINATED BY REMOTE ADMINISTRATOR."
+        ];
+
+        function runTerminalSequence() {
+            const consoleBox = document.getElementById("logConsole");
+            let lineIndex = 0;
+
+            function printNextLine() {
+                if (lineIndex < logLines.length) {
+                    const p = document.createElement("p");
+                    p.style.margin = "0 0 8px 0";
+                    
+                    // Style specific warning elements dynamically
+                    if (logLines[lineIndex].includes("CRITICAL") || logLines[lineIndex].includes("WARNING")) {
+                        p.style.color = "#ff3333";
+                    } else if (logLines[lineIndex].includes("[LOG START")) {
+                        p.style.color = "#ffffff";
+                    }
+                    
+                    p.textContent = logLines[lineIndex];
+                    consoleBox.appendChild(p);
+                    consoleBox.scrollTop = consoleBox.scrollHeight;
+                    lineIndex++;
+                    setTimeout(printNextLine, 800); // Time gap between lines leaking out
+                }
+            }
+            printNextLine();
+        }
+    </script>
+</body>
+</html>
